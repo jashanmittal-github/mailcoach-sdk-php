@@ -7,6 +7,7 @@ use Psr\Http\Message\ResponseInterface;
 use Spatie\MailcoachSdk\Exceptions\ActionFailed;
 use Spatie\MailcoachSdk\Exceptions\InvalidData;
 use Spatie\MailcoachSdk\Exceptions\ResourceNotFound;
+use Spatie\MailcoachSdk\Exceptions\TooManyAttempts;
 use Spatie\MailcoachSdk\Exceptions\Unauthorized;
 
 trait MakesHttpRequests
@@ -94,6 +95,9 @@ trait MakesHttpRequests
 
         if ($response->getStatusCode() === 401) {
             throw new Unauthorized((string) $response->getBody());
+        }
+        if ($response->getStatusCode() === 429) {
+            throw new TooManyAttempts((string) $response->getBody());
         }
 
         throw new Exception((string) $response->getBody());
